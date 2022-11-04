@@ -51,3 +51,12 @@ func (p *Packet) Bytes() []byte {
 
 	return b
 }
+
+func CreatePacket(t uint16) Packet {
+	p := Packet{
+		packetType: t,
+		data:       make([]byte, 0),
+	}
+
+	return p
+}
