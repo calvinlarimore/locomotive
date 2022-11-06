@@ -6,22 +6,22 @@ import (
 )
 
 type SocketConn struct {
-	Socket net.Conn
+	socket net.Conn
 }
 
-func (s *SocketConn) Send(p Packet) error {
+func (s *SocketConn) Send(p *Packet) error {
 	b := p.Bytes()
-	_, err := s.Socket.Write(b)
+	_, err := s.socket.Write(b)
 
 	return err
 }
 
-func SocketConnect(h string, p int) (SocketConn, error) {
+func OpenSocket(h string, p int) (*SocketConn, error) {
 	s, err := net.Dial("tcp", fmt.Sprintf("%s:%d", h, p))
 
 	c := SocketConn{
-		Socket: s,
+		socket: s,
 	}
 
-	return c, err
+	return &c, err
 }
