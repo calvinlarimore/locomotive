@@ -47,14 +47,14 @@ func (w *PacketWriter) Write(p []byte) (int, error) {
 	return len(p), nil
 }
 
-func (p *Packet) Reader() PacketReader {
-	return PacketReader{
+func (p *Packet) Reader() *PacketReader {
+	return &PacketReader{
 		packet: p,
 	}
 }
 
-func (p *Packet) Writer() PacketWriter {
-	return PacketWriter{
+func (p *Packet) Writer() *PacketWriter {
+	return &PacketWriter{
 		packet: p,
 	}
 }
