@@ -1,9 +1,7 @@
 package openttd
 
-import "encoding/binary"
-
 type Packet struct {
-	packetType uint16
+	packetType byte
 	data       []byte
 }
 
@@ -60,19 +58,33 @@ func (p *Packet) Writer() *PacketWriter {
 }
 
 func (p *Packet) Bytes() []byte {
-	b := make([]byte, 2)
-	binary.LittleEndian.PutUint16(b, p.packetType)
+	b := make([]byte, 3)
+	b[0] = p.Type()
+
+	// TODO: Length
 
 	b = append(b, p.data...)
 
 	return b
 }
 
-func CreatePacket(t uint16) Packet {
+func (p *Packet) Type() byte {
+	return p.packetType
+}
+
+func createPacket(t byte) Packet {
 	p := Packet{
 		packetType: t,
 		data:       make([]byte, 0),
 	}
 
 	return p
+}
+
+func handlePacket(p *Packet) {
+	switch p.Type() {
+	case 0x03: // PACKET_SERVER_ERROR
+		m := newMessageServerError(p)
+		messageHandlers["error"].Handle(m)
+	}
 }
