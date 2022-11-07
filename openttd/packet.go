@@ -21,6 +21,22 @@ func (r *PacketReader) Read(p []byte) (int, error) {
 	return len(p), nil
 }
 
+func (r *PacketReader) ReadString(max uint) (string, int, error) {
+	l := max
+	o := make([]byte, max)
+
+	for i := uint(0); i < max-1; i++ {
+		o[i] = r.packet.data[i]
+		if o[i] == 0x00 {
+			l = i + 1
+		}
+	}
+
+	r.packet.data = r.packet.data[l:]
+
+	return string(o[:l]), int(l), nil
+}
+
 type PacketWriter struct {
 	packet *Packet
 }
