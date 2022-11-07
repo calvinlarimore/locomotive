@@ -84,7 +84,7 @@ func createPacket(t byte) Packet {
 func handlePacket(p *Packet) {
 	switch p.Type() {
 	case 0x03: // PACKET_SERVER_ERROR
-		m := newMessageServerError(p)
+		m := createMessageServerError(p)
 		messageHandlers["error"].Handle(m)
 	}
 }
