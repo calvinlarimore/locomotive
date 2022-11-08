@@ -6,21 +6,21 @@ import (
 	"net"
 )
 
-type conn struct {
-	socket  net.Conn
+type socket struct {
+	conn    net.Conn
 	channel chan *Packet
 }
 
-func (s *conn) send(p *Packet) error {
+func (s *socket) send(p *Packet) error {
 	b := p.Bytes()
-	_, err := s.socket.Write(b)
+	_, err := s.conn.Write(b)
 
 	return err
 }
 
-func (s *conn) read() (*Packet, error) {
+func (s *socket) read() (*Packet, error) {
 	b := make([]byte, 69)
-	_, err := s.socket.Read(b)
+	_, err := s.conn.Read(b)
 
 	l := binary.LittleEndian.Uint16(b[1:3])
 
@@ -30,25 +30,25 @@ func (s *conn) read() (*Packet, error) {
 	return &p, err
 }
 
-func openSocket(h string, p int, ch chan *Packet) (*conn, error) {
-	s, err := net.Dial("tcp", fmt.Sprintf("%s:%d", h, p))
+func openSocket(h string, p int, ch chan *Packet) (*socket, error) {
+	c, err := net.Dial("tcp", fmt.Sprintf("%s:%d", h, p))
 
-	c := conn{
-		socket:  s,
+	s := socket{
+		conn:    c,
 		channel: ch,
 	}
 
-	go func(c *conn, ch chan *Packet) {
+	go func(s *socket, c chan *Packet) {
 		for {
-			p, err := c.read()
-			ch <- p
+			p, err := s.read()
+			c <- p
 
 			if err != nil {
 				return
 				// Properly handle error
 			}
 		}
-	}(&c, ch)
+	}(&s, ch)
 
-	return &c, err
+	return &s, err
 }
