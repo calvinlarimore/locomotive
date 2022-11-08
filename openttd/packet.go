@@ -10,11 +10,11 @@ type Packet struct {
 	data       []byte
 }
 
-type PacketReader struct {
+type packetReader struct {
 	packet *Packet
 }
 
-func (r *PacketReader) Read(b []byte) int {
+func (r *packetReader) Read(b []byte) int {
 	for i := range b {
 		b[i] = r.packet.data[i]
 	}
@@ -24,7 +24,7 @@ func (r *PacketReader) Read(b []byte) int {
 	return len(b)
 }
 
-func (r *PacketReader) ReadByte() (byte, error) {
+func (r *packetReader) ReadByte() (byte, error) {
 	b := make([]byte, 1)
 
 	l := r.Read(b)
@@ -35,7 +35,7 @@ func (r *PacketReader) ReadByte() (byte, error) {
 	return b[0], nil
 }
 
-func (r *PacketReader) ReadUint16() (uint16, error) {
+func (r *packetReader) ReadUint16() (uint16, error) {
 	b := make([]byte, 2)
 
 	l := r.Read(b)
@@ -46,7 +46,7 @@ func (r *PacketReader) ReadUint16() (uint16, error) {
 	return binary.LittleEndian.Uint16(b), nil
 }
 
-func (r *PacketReader) ReadUint32() (uint32, error) {
+func (r *packetReader) ReadUint32() (uint32, error) {
 	b := make([]byte, 4)
 
 	l := r.Read(b)
@@ -57,7 +57,7 @@ func (r *PacketReader) ReadUint32() (uint32, error) {
 	return binary.LittleEndian.Uint32(b), nil
 }
 
-func (r *PacketReader) ReadUint64() (uint64, error) {
+func (r *packetReader) ReadUint64() (uint64, error) {
 	b := make([]byte, 8)
 
 	l := r.Read(b)
@@ -68,13 +68,13 @@ func (r *PacketReader) ReadUint64() (uint64, error) {
 	return binary.LittleEndian.Uint64(b), nil
 }
 
-func (r *PacketReader) ReadBool() (bool, error) {
+func (r *packetReader) ReadBool() (bool, error) {
 	b, err := r.ReadByte()
 
 	return b != 0x00, err
 }
 
-func (r *PacketReader) ReadString(max uint) (string, int) {
+func (r *packetReader) ReadString(max uint) (string, int) {
 	l := max
 	b := make([]byte, max)
 
@@ -90,39 +90,39 @@ func (r *PacketReader) ReadString(max uint) (string, int) {
 	return string(b[:l]), int(l)
 }
 
-type PacketWriter struct {
+type packetWriter struct {
 	packet *Packet
 }
 
-func (w *PacketWriter) Write(b []byte) {
+func (w *packetWriter) Write(b []byte) {
 	w.packet.data = append(w.packet.data, b...)
 }
 
-func (w *PacketWriter) WriteByte(b byte) error {
+func (w *packetWriter) WriteByte(b byte) error {
 	w.packet.data = append(w.packet.data, b)
 
 	return nil
 }
 
-func (w *PacketWriter) WriteUint16(i uint16) error {
+func (w *packetWriter) WriteUint16(i uint16) error {
 	w.packet.data = append(w.packet.data, binary.LittleEndian.AppendUint16(make([]byte, 0), i)...)
 
 	return nil
 }
 
-func (w *PacketWriter) WriteUint32(i uint32) error {
+func (w *packetWriter) WriteUint32(i uint32) error {
 	w.packet.data = append(w.packet.data, binary.LittleEndian.AppendUint32(make([]byte, 0), i)...)
 
 	return nil
 }
 
-func (w *PacketWriter) WriteUint64(i uint64) error {
+func (w *packetWriter) WriteUint64(i uint64) error {
 	w.packet.data = append(w.packet.data, binary.LittleEndian.AppendUint64(make([]byte, 0), i)...)
 
 	return nil
 }
 
-func (w *PacketWriter) WriteBool(b bool) error {
+func (w *packetWriter) WriteBool(b bool) error {
 	var err error
 
 	if b {
@@ -134,21 +134,21 @@ func (w *PacketWriter) WriteBool(b bool) error {
 	return err
 }
 
-func (w *PacketWriter) WriteString(s string) int {
+func (w *packetWriter) WriteString(s string) int {
 	w.packet.data = append(w.packet.data, s...)
 	w.packet.data = append(w.packet.data, 0x00)
 
 	return len(s) + 1
 }
 
-func (p *Packet) Reader() *PacketReader {
-	return &PacketReader{
+func (p *Packet) Reader() *packetReader {
+	return &packetReader{
 		packet: p,
 	}
 }
 
-func (p *Packet) Writer() *PacketWriter {
-	return &PacketWriter{
+func (p *Packet) Writer() *packetWriter {
+	return &packetWriter{
 		packet: p,
 	}
 }
