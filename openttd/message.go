@@ -206,3 +206,12 @@ func (m *MessageClientJoin) packet() *packet {
 
 	return &p
 }
+
+// PACKET_CLIENT_GAME_INFO
+type MessageClientGameInfo struct{}
+
+func (m *MessageClientGameInfo) packet() *packet {
+	p := createPacket(0x07)
+
+	return &p
+}
