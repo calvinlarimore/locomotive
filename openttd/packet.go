@@ -188,5 +188,8 @@ func handlePacket(p *packet) {
 	case 0x03: // PACKET_SERVER_ERROR
 		m := createMessageServerError(p.Reader())
 		messageHandlers["error"].Handle(m)
+	case 0x06: // PACKET_SERVER_GAME_INFO
+		m := createMessageServerGameInfo(p.Reader())
+		messageHandlers["error"].Handle(m)
 	}
 }
