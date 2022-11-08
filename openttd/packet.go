@@ -179,6 +179,12 @@ func createPacket(t byte) Packet {
 
 func handlePacket(p *Packet) {
 	switch p.Type() {
+	case 0x00: // PACKET_SERVER_FULL
+		m := createMessageServerError(p)
+		messageHandlers["full"].Handle(m)
+	case 0x01: // PACKET_SERVER_BANNED
+		m := createMessageServerError(p)
+		messageHandlers["banned"].Handle(m)
 	case 0x03: // PACKET_SERVER_ERROR
 		m := createMessageServerError(p)
 		messageHandlers["error"].Handle(m)
