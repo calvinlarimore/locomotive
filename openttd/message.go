@@ -20,9 +20,9 @@ func (m *MessageServerError) Type() byte {
 
 func createMessageServerError(p *Packet) *MessageServerError {
 	m := MessageServerError{}
-	b := make([]byte, 1)
-	p.Reader().Read(b)
-	m.Error = b[0]
+
+	b, _ := p.Reader().ReadByte()
+	m.Error = b
 
 	return &m
 }
