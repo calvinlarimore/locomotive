@@ -1,5 +1,5 @@
 package openttd
 
 type Conn interface {
-	Send(*Packet) error
+	send(*Packet) error
 }

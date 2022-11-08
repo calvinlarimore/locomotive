@@ -5,21 +5,21 @@ import (
 	"net"
 )
 
-type SocketConn struct {
+type socketConn struct {
 	socket net.Conn
 }
 
-func (s *SocketConn) Send(p *Packet) error {
+func (s *socketConn) send(p *Packet) error {
 	b := p.Bytes()
 	_, err := s.socket.Write(b)
 
 	return err
 }
 
-func OpenSocket(h string, p int) (*SocketConn, error) {
+func OpenSocket(h string, p int) (*socketConn, error) {
 	s, err := net.Dial("tcp", fmt.Sprintf("%s:%d", h, p))
 
-	c := SocketConn{
+	c := socketConn{
 		socket: s,
 	}
 
