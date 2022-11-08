@@ -204,14 +204,10 @@ func (m *MessageClientJoin) packet() *packet {
 	p.Writer().WriteByte(m.Company)
 	p.Writer().WriteByte(0x00) // LEGACY: Used to contain language id
 
-	return &p
+	return p
 }
 
 // PACKET_CLIENT_GAME_INFO
 type MessageClientGameInfo struct{}
 
-func (m *MessageClientGameInfo) packet() *packet {
-	p := createPacket(0x07)
-
-	return &p
-}
+func (m *MessageClientGameInfo) packet() *packet { return createPacket(0x07) }

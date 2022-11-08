@@ -26,7 +26,7 @@ func (s *socket) read() (*packet, error) {
 	p := createPacket(b[0])
 	p.data = append(p.data, b[3:l]...)
 
-	return &p, err
+	return p, err
 }
 
 func openSocket(h string, p int) (*socket, error) {

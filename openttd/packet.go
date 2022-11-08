@@ -168,13 +168,13 @@ func (p *packet) Type() byte {
 	return p.packetType
 }
 
-func createPacket(t byte) packet {
+func createPacket(t byte) *packet {
 	p := packet{
 		packetType: t,
 		data:       make([]byte, 0),
 	}
 
-	return p
+	return &p
 }
 
 func handlePacket(p *packet) {
