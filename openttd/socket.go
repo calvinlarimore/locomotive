@@ -38,10 +38,10 @@ func openSocket(h string, p int, ch chan *Packet) (*socket, error) {
 		channel: ch,
 	}
 
-	go func(s *socket, c chan *Packet) {
+	go func(s *socket, ch chan *Packet) {
 		for {
 			p, err := s.read()
-			c <- p
+			ch <- p
 
 			if err != nil {
 				return
