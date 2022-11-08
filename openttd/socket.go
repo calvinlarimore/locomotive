@@ -8,7 +8,6 @@ import (
 
 type socket struct {
 	conn    net.Conn
-	channel chan *Packet
 }
 
 func (s *socket) send(p *Packet) error {
@@ -30,25 +29,24 @@ func (s *socket) read() (*Packet, error) {
 	return &p, err
 }
 
-func openSocket(h string, p int, ch chan *Packet) (*socket, error) {
+func openSocket(h string, p int) (*socket, error) {
 	c, err := net.Dial("tcp", fmt.Sprintf("%s:%d", h, p))
 
 	s := socket{
 		conn:    c,
-		channel: ch,
 	}
 
-	go func(s *socket, ch chan *Packet) {
+	go func(s *socket) {
 		for {
 			p, err := s.read()
-			ch <- p
+			handlePacket(p)
 
 			if err != nil {
 				return
 				// Properly handle error
 			}
 		}
-	}(&s, ch)
+	}(&s)
 
 	return &s, err
 }
