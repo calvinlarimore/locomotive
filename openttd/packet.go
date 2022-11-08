@@ -180,13 +180,13 @@ func createPacket(t byte) packet {
 func handlePacket(p *packet) {
 	switch p.Type() {
 	case 0x00: // PACKET_SERVER_FULL
-		m := createMessageServerFull(p)
+		m := createMessageServerFull(p.Reader())
 		messageHandlers["full"].Handle(m)
 	case 0x01: // PACKET_SERVER_BANNED
-		m := createMessageServerBanned(p)
+		m := createMessageServerBanned(p.Reader())
 		messageHandlers["banned"].Handle(m)
 	case 0x03: // PACKET_SERVER_ERROR
-		m := createMessageServerError(p)
+		m := createMessageServerError(p.Reader())
 		messageHandlers["error"].Handle(m)
 	}
 }

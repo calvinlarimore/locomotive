@@ -25,14 +25,14 @@ type MessageServerFull struct{}
 
 func (m *MessageServerFull) Type() byte { return 0x00 }
 
-func createMessageServerFull(p *packet) *MessageServerFull { return &MessageServerFull{} }
+func createMessageServerFull(r *packetReader) *MessageServerFull { return &MessageServerFull{} }
 
 // PACKET_SERVER_BANNED
 type MessageServerBanned struct{}
 
 func (m *MessageServerBanned) Type() byte { return 0x01 }
 
-func createMessageServerBanned(p *packet) *MessageServerBanned { return &MessageServerBanned{} }
+func createMessageServerBanned(r *packetReader) *MessageServerBanned { return &MessageServerBanned{} }
 
 // PACKET_SERVER_ERROR
 type MessageServerError struct {
@@ -41,10 +41,10 @@ type MessageServerError struct {
 
 func (m *MessageServerError) Type() byte { return 0x03 }
 
-func createMessageServerError(p *packet) *MessageServerError {
+func createMessageServerError(r *packetReader) *MessageServerError {
 	m := MessageServerError{}
 
-	b, _ := p.Reader().ReadByte()
+	b, _ := r.ReadByte()
 	m.Error = b
 
 	return &m
