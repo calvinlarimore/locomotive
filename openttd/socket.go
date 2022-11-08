@@ -30,7 +30,7 @@ func (s *conn) read() (*Packet, error) {
 	return &p, err
 }
 
-func OpenSocket(h string, p int, ch chan *Packet) (*conn, error) {
+func openSocket(h string, p int, ch chan *Packet) (*conn, error) {
 	s, err := net.Dial("tcp", fmt.Sprintf("%s:%d", h, p))
 
 	c := conn{
