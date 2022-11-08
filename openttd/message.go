@@ -14,6 +14,10 @@ type MessageHandler[T ServerMessage] interface {
 
 var messageHandlers = make(map[string]MessageHandler[ServerMessage])
 
+func SetMessageHandler(m string, h MessageHandler[ServerMessage]) {
+	messageHandlers[m] = h
+}
+
 // Server Messages:
 
 // PACKET_SERVER_FULL
