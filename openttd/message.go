@@ -54,8 +54,8 @@ func createMessageServerError(p *packet) *MessageServerError {
 
 // PACKET_CLIENT_JOIN
 type MessageClientJoin struct {
-	name    string
-	company byte
+	Name    string
+	Company byte
 }
 
 func (m *MessageClientJoin) packet() *packet {
@@ -63,8 +63,8 @@ func (m *MessageClientJoin) packet() *packet {
 
 	p.Writer().WriteString(gameVersion)
 	p.Writer().WriteUint32(newGRFRevision)
-	p.Writer().WriteString(m.name)
-	p.Writer().WriteByte(m.company)
+	p.Writer().WriteString(m.Name)
+	p.Writer().WriteByte(m.Company)
 	p.Writer().WriteByte(0x00) // LEGACY: Used to contain language id
 
 	return &p
