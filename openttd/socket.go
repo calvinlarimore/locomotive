@@ -7,17 +7,17 @@ import (
 )
 
 type socket struct {
-	conn    net.Conn
+	conn net.Conn
 }
 
-func (s *socket) send(p *Packet) error {
+func (s *socket) send(p *packet) error {
 	b := p.Bytes()
 	_, err := s.conn.Write(b)
 
 	return err
 }
 
-func (s *socket) read() (*Packet, error) {
+func (s *socket) read() (*packet, error) {
 	b := make([]byte, 69)
 	_, err := s.conn.Read(b)
 
@@ -33,7 +33,7 @@ func openSocket(h string, p int) (*socket, error) {
 	c, err := net.Dial("tcp", fmt.Sprintf("%s:%d", h, p))
 
 	s := socket{
-		conn:    c,
+		conn: c,
 	}
 
 	go func(s *socket) {

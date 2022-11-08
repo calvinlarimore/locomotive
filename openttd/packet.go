@@ -5,13 +5,13 @@ import (
 	"fmt"
 )
 
-type Packet struct {
+type packet struct {
 	packetType byte
 	data       []byte
 }
 
 type packetReader struct {
-	packet *Packet
+	packet *packet
 }
 
 func (r *packetReader) Read(b []byte) int {
@@ -91,7 +91,7 @@ func (r *packetReader) ReadString(max uint) (string, int) {
 }
 
 type packetWriter struct {
-	packet *Packet
+	packet *packet
 }
 
 func (w *packetWriter) Write(b []byte) {
@@ -141,19 +141,19 @@ func (w *packetWriter) WriteString(s string) int {
 	return len(s) + 1
 }
 
-func (p *Packet) Reader() *packetReader {
+func (p *packet) Reader() *packetReader {
 	return &packetReader{
 		packet: p,
 	}
 }
 
-func (p *Packet) Writer() *packetWriter {
+func (p *packet) Writer() *packetWriter {
 	return &packetWriter{
 		packet: p,
 	}
 }
 
-func (p *Packet) Bytes() []byte {
+func (p *packet) Bytes() []byte {
 	b := make([]byte, 3)
 	b[0] = p.Type()
 
@@ -164,12 +164,12 @@ func (p *Packet) Bytes() []byte {
 	return b
 }
 
-func (p *Packet) Type() byte {
+func (p *packet) Type() byte {
 	return p.packetType
 }
 
-func createPacket(t byte) Packet {
-	p := Packet{
+func createPacket(t byte) packet {
+	p := packet{
 		packetType: t,
 		data:       make([]byte, 0),
 	}
@@ -177,7 +177,7 @@ func createPacket(t byte) Packet {
 	return p
 }
 
-func handlePacket(p *Packet) {
+func handlePacket(p *packet) {
 	switch p.Type() {
 	case 0x00: // PACKET_SERVER_FULL
 		m := createMessageServerFull(p)
