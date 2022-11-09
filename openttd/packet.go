@@ -190,6 +190,6 @@ func handlePacket(p *packet) {
 		messageHandlers["error"].Handle(m)
 	case 0x06: // PACKET_SERVER_GAME_INFO
 		m := createMessageServerGameInfo(p.Reader())
-		messageHandlers["error"].Handle(m)
+		messageHandlers["game_info"].Handle(m)
 	}
 }
