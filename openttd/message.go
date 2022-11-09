@@ -28,14 +28,14 @@ func SetMessageHandler(m string, h MessageHandler[ServerMessage]) {
 // PACKET_SERVER_FULL
 type MessageServerFull struct{}
 
-func (m *MessageServerFull) Type() byte { return 0x00 }
+func (MessageServerFull) Type() byte { return 0x00 }
 
 func createMessageServerFull(r *packetReader) *MessageServerFull { return &MessageServerFull{} }
 
 // PACKET_SERVER_BANNED
 type MessageServerBanned struct{}
 
-func (m *MessageServerBanned) Type() byte { return 0x01 }
+func (MessageServerBanned) Type() byte { return 0x01 }
 
 func createMessageServerBanned(r *packetReader) *MessageServerBanned { return &MessageServerBanned{} }
 
@@ -44,7 +44,7 @@ type MessageServerError struct {
 	Error byte
 }
 
-func (m *MessageServerError) Type() byte { return 0x03 }
+func (MessageServerError) Type() byte { return 0x03 }
 
 func createMessageServerError(r *packetReader) *MessageServerError {
 	m := MessageServerError{}
@@ -77,7 +77,7 @@ type MessageServerGameInfo struct {
 	IsDedicated       bool
 }
 
-func (m *MessageServerGameInfo) Type() byte { return 0x06 }
+func (MessageServerGameInfo) Type() byte { return 0x06 }
 
 func createMessageServerGameInfo(r *packetReader) *MessageServerGameInfo {
 	m := MessageServerGameInfo{}
