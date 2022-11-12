@@ -83,6 +83,7 @@ func (r *packetReader) ReadString(max uint) (string, int) {
 		b[i] = r.packet.data[i]
 		if b[i] == 0x00 {
 			l = i + 1
+			break
 		}
 	}
 
