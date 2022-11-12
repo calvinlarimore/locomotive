@@ -61,8 +61,8 @@ type MessageServerGameInfo struct {
 	GameScriptVersion uint32
 	GameScript        string
 	GRFs              []newGRFConfig
-	StartDate         date
 	GameDate          date
+	StartDate         date
 	MaxCompanies      byte
 	ComapanyCount     byte
 	ServerName        string
@@ -134,10 +134,10 @@ func createMessageServerGameInfo(r *packetReader) *MessageServerGameInfo {
 		fallthrough
 	case 0x03:
 		{
-			s, _ := r.ReadUint32()
-			m.StartDate = date(s)
 			g, _ := r.ReadUint32()
 			m.GameDate = date(g)
+			s, _ := r.ReadUint32()
+			m.StartDate = date(s)
 		}
 
 		fallthrough
