@@ -187,6 +187,16 @@ func createMessageServerGameInfo(r *packetReader) *MessageServerGameInfo {
 	return &m
 }
 
+// PACKET_SERVER_NEED_GAME_PASSWORD
+type MessageServerNeedGamePassword struct{}
+
+func (MessageServerNeedGamePassword) Type() byte { return 0x0a }
+
+func createMessageServerNeedGamePassword(r *packetReader) *MessageServerNeedGamePassword {
+	m := MessageServerNeedGamePassword{}
+	return &m
+}
+
 // PACKET_SERVER_WELCOME
 type MessageServerWelcome struct {
 	ClientID       uint32
@@ -235,3 +245,16 @@ func (m *MessageClientJoin) packet() *packet {
 type MessageClientGameInfo struct{}
 
 func (m *MessageClientGameInfo) packet() *packet { return createPacket(0x07) }
+
+// PACKET_CLIENT_GAME_INFO
+type MessageClientGamePassword struct {
+	Password string
+}
+
+func (m *MessageClientGamePassword) packet() *packet {
+	p := createPacket(0x0b)
+
+	p.Writer().WriteString(m.Password)
+
+	return p
+}

@@ -223,6 +223,16 @@ func handlePacket(p *packet) {
 			errInvalidHandler(m)
 		}
 
+	case 0x0a: // PACKET_SERVER_NEED_GAME_PASSWORD
+		m := createMessageServerNeedGamePassword(p.Reader())
+		h, ok := messageHandlers["need_game_password"].(MessageHandler[MessageServerNeedGamePassword])
+
+		if ok {
+			h.Handle(m)
+		} else {
+			errInvalidHandler(m)
+		}
+
 	case 0x0e: // PACKET_SERVER_WELCOME
 		m := createMessageServerWelcome(p.Reader())
 		h, ok := messageHandlers["welcome"].(MessageHandler[MessageServerWelcome])
