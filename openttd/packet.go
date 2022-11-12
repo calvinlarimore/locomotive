@@ -158,7 +158,7 @@ func (p *packet) Bytes() []byte {
 	b := make([]byte, 0)
 
 	l := uint16(len(p.data) + 3)
-	b = append(b, binary.BigEndian.AppendUint16(make([]byte, 0), l)...)
+	b = append(b, binary.LittleEndian.AppendUint16(make([]byte, 0), l)...)
 
 	b = append(b, p.Type())
 
