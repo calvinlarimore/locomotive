@@ -181,15 +181,46 @@ func handlePacket(p *packet) {
 	switch p.Type() {
 	case 0x00: // PACKET_SERVER_FULL
 		m := createMessageServerFull(p.Reader())
-		messageHandlers["full"].Handle(m)
+		h, ok := messageHandlers["full"].(MessageHandler[MessageServerFull])
+
+		if ok {
+			h.Handle(m)
+		} else {
+			errInvalidHandler(m)
+		}
+
 	case 0x01: // PACKET_SERVER_BANNED
 		m := createMessageServerBanned(p.Reader())
-		messageHandlers["banned"].Handle(m)
+		h, ok := messageHandlers["banned"].(MessageHandler[MessageServerBanned])
+
+		if ok {
+			h.Handle(m)
+		} else {
+			errInvalidHandler(m)
+		}
+
 	case 0x03: // PACKET_SERVER_ERROR
 		m := createMessageServerError(p.Reader())
-		messageHandlers["error"].Handle(m)
+		h, ok := messageHandlers["error"].(MessageHandler[MessageServerError])
+
+		if ok {
+			h.Handle(m)
+		} else {
+			errInvalidHandler(m)
+		}
+
 	case 0x06: // PACKET_SERVER_GAME_INFO
 		m := createMessageServerGameInfo(p.Reader())
-		messageHandlers["game_info"].Handle(m)
+		h, ok := messageHandlers["game_info"].(MessageHandler[MessageServerGameInfo])
+
+		if ok {
+			h.Handle(m)
+		} else {
+			errInvalidHandler(m)
 	}
+	}
+}
+
+func errInvalidHandler(m ServerMessage) {
+	log.Println(fmt.Errorf("message handler for message type \"%T\" has invalid type", m))
 }

@@ -14,12 +14,12 @@ type ClientMessage interface {
 }
 
 type MessageHandler[T ServerMessage] interface {
-	Handle(T)
+	Handle(*T)
 }
 
-var messageHandlers = make(map[string]MessageHandler[ServerMessage])
+var messageHandlers = make(map[string]any)
 
-func SetMessageHandler(m string, h MessageHandler[ServerMessage]) {
+func SetMessageHandler(m string, h any) {
 	messageHandlers[m] = h
 }
 
