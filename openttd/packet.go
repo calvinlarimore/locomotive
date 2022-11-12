@@ -234,7 +234,7 @@ func handlePacket(p *packet) {
 		}
 
 	default:
-		log.Printf("warn: no message handler for message type 0x%02x\n", p.Type())
+		log.Println(fmt.Errorf("unknown packet type 0x%02x", p.Type()))
 	}
 }
 
