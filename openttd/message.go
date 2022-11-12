@@ -187,6 +187,30 @@ func createMessageServerGameInfo(r *packetReader) *MessageServerGameInfo {
 	return &m
 }
 
+// PACKET_SERVER_WELCOME
+type MessageServerWelcome struct {
+	ClientID       uint32
+	GenerationSeed uint32
+	ServerID       string
+}
+
+func (MessageServerWelcome) Type() byte { return 0x0e }
+
+func createMessageServerWelcome(r *packetReader) *MessageServerWelcome {
+	m := MessageServerWelcome{}
+
+	id, _ := r.ReadUint32()
+	m.ClientID = id
+
+	seed, _ := r.ReadUint32()
+	m.GenerationSeed = seed
+
+	sid, _ := r.ReadString(networkServerIDLength)
+	m.ServerID = sid
+
+	return &m
+}
+
 // Client Messages:
 
 // PACKET_CLIENT_JOIN

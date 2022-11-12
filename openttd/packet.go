@@ -222,7 +222,17 @@ func handlePacket(p *packet) {
 		} else {
 			errInvalidHandler(m)
 		}
-		
+
+	case 0x0e: // PACKET_SERVER_WELCOME
+		m := createMessageServerWelcome(p.Reader())
+		h, ok := messageHandlers["welcome"].(MessageHandler[MessageServerWelcome])
+
+		if ok {
+			h.Handle(m)
+		} else {
+			errInvalidHandler(m)
+		}
+
 	default:
 		log.Printf("warn: no message handler for message type 0x%02x\n", p.Type())
 	}
