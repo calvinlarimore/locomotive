@@ -3,6 +3,7 @@ package openttd
 import (
 	"encoding/binary"
 	"fmt"
+	"log"
 )
 
 type packet struct {
@@ -154,10 +155,12 @@ func (p *packet) Writer() *packetWriter {
 }
 
 func (p *packet) Bytes() []byte {
-	b := make([]byte, 3)
-	b[0] = p.Type()
+	b := make([]byte, 0)
 
-	// TODO: Length
+	l := uint16(len(p.data))
+	b = append(b, binary.BigEndian.AppendUint16(make([]byte, 0), l)...)
+
+	b = append(b, p.Type())
 
 	b = append(b, p.data...)
 
@@ -217,7 +220,7 @@ func handlePacket(p *packet) {
 			h.Handle(m)
 		} else {
 			errInvalidHandler(m)
-	}
+		}
 	}
 }
 
