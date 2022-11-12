@@ -3,7 +3,6 @@ package openttd
 import (
 	"encoding/binary"
 	"fmt"
-	"log"
 	"net"
 )
 
@@ -19,11 +18,8 @@ func (s *socket) send(p *packet) error {
 }
 
 func (s *socket) read() (*packet, error) {
-	b := make([]byte, 69)
+	b := make([]byte, 32767)
 	_, err := s.conn.Read(b)
-
-	log.Println(b)
-	log.Println(err)
 
 	l := binary.LittleEndian.Uint16(b[0:2])
 
