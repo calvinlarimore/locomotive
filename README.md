@@ -2,7 +2,7 @@
 
 <h1><img src="https://raw.githubusercontent.com/giantfroje/locomotive/main/assets/locomotive-big.png" alt="Locomotive"></h1>
 
-#### - A Go OpenTTD Client Engine -
+#### - Go OpenTTD Client Engine -
 
 </div>
 
