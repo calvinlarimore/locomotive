@@ -165,6 +165,8 @@ func (p *packet) Bytes() []byte {
 
 	b = append(b, p.data...)
 
+	fmt.Printf("Converting packet to bytes: %d\n", b)
+
 	return b
 }
 
