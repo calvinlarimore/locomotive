@@ -10,17 +10,7 @@ type ServerMessage interface {
 }
 
 type ClientMessage interface {
-	packet() *packet
-}
-
-type MessageHandler[T ServerMessage] interface {
-	Handle(*T)
-}
-
-var messageHandlers = make(map[string]any)
-
-func SetMessageHandler(m string, h any) {
-	messageHandlers[m] = h
+	Packet() *Packet
 }
 
 // Server Messages:
@@ -30,14 +20,14 @@ type MessageServerFull struct{}
 
 func (MessageServerFull) Type() byte { return 0x00 }
 
-func createMessageServerFull(r *packetReader) *MessageServerFull { return &MessageServerFull{} }
+func CreateMessageServerFull(r *packetReader) *MessageServerFull { return &MessageServerFull{} }
 
 // PACKET_SERVER_BANNED
 type MessageServerBanned struct{}
 
 func (MessageServerBanned) Type() byte { return 0x01 }
 
-func createMessageServerBanned(r *packetReader) *MessageServerBanned { return &MessageServerBanned{} }
+func CreateMessageServerBanned(r *packetReader) *MessageServerBanned { return &MessageServerBanned{} }
 
 // PACKET_SERVER_ERROR
 type MessageServerError struct {
@@ -46,7 +36,7 @@ type MessageServerError struct {
 
 func (MessageServerError) Type() byte { return 0x03 }
 
-func createMessageServerError(r *packetReader) *MessageServerError {
+func CreateMessageServerError(r *packetReader) *MessageServerError {
 	m := MessageServerError{}
 
 	b, _ := r.ReadByte()
@@ -79,7 +69,7 @@ type MessageServerGameInfo struct {
 
 func (MessageServerGameInfo) Type() byte { return 0x06 }
 
-func createMessageServerGameInfo(r *packetReader) *MessageServerGameInfo {
+func CreateMessageServerGameInfo(r *packetReader) *MessageServerGameInfo {
 	m := MessageServerGameInfo{}
 
 	m.ProtocolVersion, _ = r.ReadByte()
@@ -192,7 +182,7 @@ type MessageServerNeedGamePassword struct{}
 
 func (MessageServerNeedGamePassword) Type() byte { return 0x0a }
 
-func createMessageServerNeedGamePassword(r *packetReader) *MessageServerNeedGamePassword {
+func CreateMessageServerNeedGamePassword(r *packetReader) *MessageServerNeedGamePassword {
 	m := MessageServerNeedGamePassword{}
 	return &m
 }
@@ -206,7 +196,7 @@ type MessageServerWelcome struct {
 
 func (MessageServerWelcome) Type() byte { return 0x0e }
 
-func createMessageServerWelcome(r *packetReader) *MessageServerWelcome {
+func CreateMessageServerWelcome(r *packetReader) *MessageServerWelcome {
 	m := MessageServerWelcome{}
 
 	id, _ := r.ReadUint32()
@@ -229,8 +219,8 @@ type MessageClientJoin struct {
 	Company byte
 }
 
-func (m *MessageClientJoin) packet() *packet {
-	p := createPacket(0x02)
+func (m *MessageClientJoin) Packet() *Packet {
+	p := CreatePacket(0x02)
 
 	p.Writer().WriteString(gameVersion)
 	p.Writer().WriteUint32(newGRFRevision)
@@ -244,15 +234,15 @@ func (m *MessageClientJoin) packet() *packet {
 // PACKET_CLIENT_GAME_INFO
 type MessageClientGameInfo struct{}
 
-func (m *MessageClientGameInfo) packet() *packet { return createPacket(0x07) }
+func (m *MessageClientGameInfo) Packet() *Packet { return CreatePacket(0x07) }
 
 // PACKET_CLIENT_GAME_INFO
 type MessageClientGamePassword struct {
 	Password string
 }
 
-func (m *MessageClientGamePassword) packet() *packet {
-	p := createPacket(0x0b)
+func (m *MessageClientGamePassword) Packet() *Packet {
+	p := CreatePacket(0x0b)
 
 	p.Writer().WriteString(m.Password)
 

@@ -3,24 +3,23 @@ package openttd
 import (
 	"encoding/binary"
 	"fmt"
-	"log"
 )
 
-type packet struct {
+type Packet struct {
 	packetType byte
-	data       []byte
+	Data       []byte
 }
 
 type packetReader struct {
-	packet *packet
+	packet *Packet
 }
 
 func (r *packetReader) Read(b []byte) int {
 	for i := range b {
-		b[i] = r.packet.data[i]
+		b[i] = r.packet.Data[i]
 	}
 
-	r.packet.data = r.packet.data[len(b):]
+	r.packet.Data = r.packet.Data[len(b):]
 
 	return len(b)
 }
@@ -80,46 +79,46 @@ func (r *packetReader) ReadString(max uint) (string, int) {
 	b := make([]byte, max)
 
 	for i := uint(0); i < max-1; i++ {
-		b[i] = r.packet.data[i]
+		b[i] = r.packet.Data[i]
 		if b[i] == 0x00 {
 			l = i + 1
 			break
 		}
 	}
 
-	r.packet.data = r.packet.data[l:]
+	r.packet.Data = r.packet.Data[l:]
 
 	return string(b[:l]), int(l)
 }
 
 type packetWriter struct {
-	packet *packet
+	packet *Packet
 }
 
 func (w *packetWriter) Write(b []byte) {
-	w.packet.data = append(w.packet.data, b...)
+	w.packet.Data = append(w.packet.Data, b...)
 }
 
 func (w *packetWriter) WriteByte(b byte) error {
-	w.packet.data = append(w.packet.data, b)
+	w.packet.Data = append(w.packet.Data, b)
 
 	return nil
 }
 
 func (w *packetWriter) WriteUint16(i uint16) error {
-	w.packet.data = append(w.packet.data, binary.LittleEndian.AppendUint16(make([]byte, 0), i)...)
+	w.packet.Data = append(w.packet.Data, binary.LittleEndian.AppendUint16(make([]byte, 0), i)...)
 
 	return nil
 }
 
 func (w *packetWriter) WriteUint32(i uint32) error {
-	w.packet.data = append(w.packet.data, binary.LittleEndian.AppendUint32(make([]byte, 0), i)...)
+	w.packet.Data = append(w.packet.Data, binary.LittleEndian.AppendUint32(make([]byte, 0), i)...)
 
 	return nil
 }
 
 func (w *packetWriter) WriteUint64(i uint64) error {
-	w.packet.data = append(w.packet.data, binary.LittleEndian.AppendUint64(make([]byte, 0), i)...)
+	w.packet.Data = append(w.packet.Data, binary.LittleEndian.AppendUint64(make([]byte, 0), i)...)
 
 	return nil
 }
@@ -137,119 +136,48 @@ func (w *packetWriter) WriteBool(b bool) error {
 }
 
 func (w *packetWriter) WriteString(s string) int {
-	w.packet.data = append(w.packet.data, s...)
-	w.packet.data = append(w.packet.data, 0x00)
+	w.packet.Data = append(w.packet.Data, s...)
+	w.packet.Data = append(w.packet.Data, 0x00)
 
 	return len(s) + 1
 }
 
-func (p *packet) Reader() *packetReader {
+func (p *Packet) Reader() *packetReader {
 	return &packetReader{
 		packet: p,
 	}
 }
 
-func (p *packet) Writer() *packetWriter {
+func (p *Packet) Writer() *packetWriter {
 	return &packetWriter{
 		packet: p,
 	}
 }
 
-func (p *packet) Bytes() []byte {
+func (p *Packet) Bytes() []byte {
 	b := make([]byte, 0)
 
-	l := uint16(len(p.data) + 3)
+	l := uint16(len(p.Data) + 3)
 	b = append(b, binary.LittleEndian.AppendUint16(make([]byte, 0), l)...)
 
 	b = append(b, p.Type())
 
-	b = append(b, p.data...)
+	b = append(b, p.Data...)
 
 	fmt.Printf("Converting packet to bytes: %d\n", b)
 
 	return b
 }
 
-func (p *packet) Type() byte {
+func (p *Packet) Type() byte {
 	return p.packetType
 }
 
-func createPacket(t byte) *packet {
-	p := packet{
+func CreatePacket(t byte) *Packet {
+	p := Packet{
 		packetType: t,
-		data:       make([]byte, 0),
+		Data:       make([]byte, 0),
 	}
 
 	return &p
-}
-
-func handlePacket(p *packet) {
-	switch p.Type() {
-	case 0x00: // PACKET_SERVER_FULL
-		m := createMessageServerFull(p.Reader())
-		h, ok := messageHandlers["full"].(MessageHandler[MessageServerFull])
-
-		if ok {
-			h.Handle(m)
-		} else {
-			errInvalidHandler(m)
-		}
-
-	case 0x01: // PACKET_SERVER_BANNED
-		m := createMessageServerBanned(p.Reader())
-		h, ok := messageHandlers["banned"].(MessageHandler[MessageServerBanned])
-
-		if ok {
-			h.Handle(m)
-		} else {
-			errInvalidHandler(m)
-		}
-
-	case 0x03: // PACKET_SERVER_ERROR
-		m := createMessageServerError(p.Reader())
-		h, ok := messageHandlers["error"].(MessageHandler[MessageServerError])
-
-		if ok {
-			h.Handle(m)
-		} else {
-			errInvalidHandler(m)
-		}
-
-	case 0x06: // PACKET_SERVER_GAME_INFO
-		m := createMessageServerGameInfo(p.Reader())
-		h, ok := messageHandlers["game_info"].(MessageHandler[MessageServerGameInfo])
-
-		if ok {
-			h.Handle(m)
-		} else {
-			errInvalidHandler(m)
-		}
-
-	case 0x0a: // PACKET_SERVER_NEED_GAME_PASSWORD
-		m := createMessageServerNeedGamePassword(p.Reader())
-		h, ok := messageHandlers["need_game_password"].(MessageHandler[MessageServerNeedGamePassword])
-
-		if ok {
-			h.Handle(m)
-		} else {
-			errInvalidHandler(m)
-		}
-
-	case 0x0e: // PACKET_SERVER_WELCOME
-		m := createMessageServerWelcome(p.Reader())
-		h, ok := messageHandlers["welcome"].(MessageHandler[MessageServerWelcome])
-
-		if ok {
-			h.Handle(m)
-		} else {
-			errInvalidHandler(m)
-		}
-
-	default:
-		log.Println(fmt.Errorf("unknown packet type 0x%02x", p.Type()))
-	}
-}
-
-func errInvalidHandler(m ServerMessage) {
-	log.Println(fmt.Errorf("message handler for message type \"%T\" has invalid type", m))
 }
